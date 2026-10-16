@@ -1,171 +1,266 @@
 <!DOCTYPE html>
+
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Camera_saw</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camera_saw — розіграш</title>
+
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
       font-family: Arial, sans-serif;
-      background: #151922;
+      background: #101014;
       color: white;
-      text-align: center;
-      padding: 20px;
     }
-    main {
-      max-width: 600px;
-      margin: auto;
-      padding: 20px;
-      background: #222936;
-      border-radius: 16px;
-    }
-    video, canvas {
+
+    .card {
       width: 100%;
-      margin-top: 12px;
-      border-radius: 10px;
-      background: #080b10;
+      max-width: 420px;
+      padding: 28px;
+      border-radius: 22px;
+      background: #202027;
+      text-align: center;
+      box-shadow: 0 12px 35px #0008;
     }
-    button, a {
-      display: inline-block;
-      margin: 6px;
-      padding: 12px;
+
+    .logo {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 27px;
+      margin: 10px 0;
+    }
+
+    p {
+      color: #d2d2dc;
+      line-height: 1.5;
+    }
+
+    .button {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      margin-top: 14px;
       border: 0;
-      border-radius: 8px;
+      border-radius: 12px;
+      background: #fe315d;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      text-decoration: none;
       cursor: pointer;
     }
-    button { background: #4b8cff; color: white; }
-    #status { color: #cbd5e1; }
+
+    .secondary {
+      background: #373743;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    video, canvas {
+      display: block;
+      width: 100%;
+      margin-top: 15px;
+      border-radius: 12px;
+    }
+
+    .notice {
+      font-size: 13px;
+      color: #bcbcca;
+      margin-top: 18px;
+    }
   </style>
+
 </head>
+
 <body>
-<main>
-  <h1>📷 Camera_saw</h1>
+  <main class="card">
+    <div class="logo" id="logo">😂</div>
+    <h1 id="title">Camera_saw</h1>
+    <p id="description">
+      Для тебе підготували маленький сюрприз!
+    </p>
+
+<button class="button" id="startButton">
+  Відкрити сюрприз
+</button>
+
+<section id="cameraSection" class="hidden">
   <p>
-    Камера вмикається після натискання кнопки.
-    Фото та відео не надсилаються автоматично.
+    Хочеш зробити фото для розіграшу?
+    Камера запускається лише після твоєї згоди.
   </p>
 
-  <button id="start">Увімкнути камеру</button>
-  <button id="stop" disabled>Вимкнути камеру</button>
+  <button class="button" id="cameraButton">
+    Увімкнути камеру
+  </button>
 
-  <video id="camera" autoplay playsinline muted></video>
+  <video id="video" autoplay playsinline class="hidden"></video>
 
-  <div>
-    <button id="photo" disabled>Зробити фото</button>
-    <button id="record" disabled>Записати відео</button>
-    <button id="finish" disabled>Зупинити відео</button>
-  </div>
+  <button class="button hidden" id="photoButton">
+    Зробити фото
+  </button>
 
-  <p id="status">Камера вимкнена.</p>
-  <canvas id="picture" hidden></canvas>
-  <div id="photoDownload"></div>
-  <video id="result" controls playsinline hidden></video>
-  <div id="videoDownload"></div>
-</main>
+  <canvas id="canvas" class="hidden"></canvas>
 
-<script>
-const camera = document.querySelector("#camera");
-const start = document.querySelector("#start");
-const stop = document.querySelector("#stop");
-const photo = document.querySelector("#photo");
-const record = document.querySelector("#record");
-const finish = document.querySelector("#finish");
-const status = document.querySelector("#status");
-const picture = document.querySelector("#picture");
-const result = document.querySelector("#result");
+  <button class="button secondary hidden" id="saveButton">
+    Зберегти фото
+  </button>
 
-let stream;
-let recorder;
-let chunks = [];
-let photoURL;
-let videoURL;
+  <button class="button secondary" id="finishButton">
+    Пропустити фото
+  </button>
+</section>
 
-start.onclick = async () => {
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true
+<section id="prankSection" class="hidden">
+  <div class="logo">🤣</div>
+  <h1>ТЕБЕ РОЗІГРАЛИ!</h1>
+  <p>
+    Не хвилюйся — це був жарт від Camera_saw.
+  </p>
+  <a
+    class="button"
+    href="https://t.me/"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    Перейти в Telegram
+  </a>
+</section>
+
+<p class="notice">
+  Це жартівлива сторінка Camera_saw, а не офіційний сайт TikTok,
+  YouTube чи Telegram. Фото не надсилається автоматично.
+</p>
+
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const style = params.get("style") || "tiktok";
+
+    const styles = {
+      tiktok: {
+        logo: "♪",
+        title: "TikTok-стиль",
+        description: "На тебе чекає жартівливий сюрприз!"
+      },
+      youtube: {
+        logo: "▶️",
+        title: "YouTube-стиль",
+        description: "Відкрий сюрприз і подивись, що буде!"
+      },
+      telegram: {
+        logo: "✈️",
+        title: "Telegram-стиль",
+        description: "Тобі надіслали маленький сюрприз!"
+      }
+    };
+
+    const selected = styles[style] || styles.tiktok;
+
+    document.getElementById("logo").textContent = selected.logo;
+    document.getElementById("title").textContent = selected.title;
+    document.getElementById("description").textContent =
+      selected.description;
+
+    const startButton = document.getElementById("startButton");
+    const cameraSection = document.getElementById("cameraSection");
+    const cameraButton = document.getElementById("cameraButton");
+    const video = document.getElementById("video");
+    const photoButton = document.getElementById("photoButton");
+    const canvas = document.getElementById("canvas");
+    const saveButton = document.getElementById("saveButton");
+    const finishButton = document.getElementById("finishButton");
+    const prankSection = document.getElementById("prankSection");
+
+    let stream = null;
+    let photoUrl = null;
+
+    startButton.addEventListener("click", () => {
+      startButton.classList.add("hidden");
+      cameraSection.classList.remove("hidden");
     });
-    camera.srcObject = stream;
-    start.disabled = true;
-    stop.disabled = false;
-    photo.disabled = false;
-    record.disabled = false;
-    status.textContent = "Камера увімкнена.";
-  } catch {
-    status.textContent =
-      "Камеру не вдалося ввімкнути. Перевір дозвіл браузера.";
-  }
-};
 
-stop.onclick = () => {
-  if (stream) stream.getTracks().forEach(track => track.stop());
-  stream = null;
-  camera.srcObject = null;
-  start.disabled = false;
-  stop.disabled = true;
-  photo.disabled = true;
-  record.disabled = true;
-  finish.disabled = true;
-  status.textContent = "Камера вимкнена.";
-};
+    cameraButton.addEventListener("click", async () => {
+      if (!navigator.mediaDevices ||
+          !navigator.mediaDevices.getUserMedia) {
+        alert("Браузер не підтримує доступ до камери.");
+        return;
+      }
 
-photo.onclick = () => {
-  if (!camera.videoWidth) return;
-  picture.width = camera.videoWidth;
-  picture.height = camera.videoHeight;
-  picture.getContext("2d").drawImage(camera, 0, 0);
-  picture.hidden = false;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: false
+        });
 
-  picture.toBlob(blob => {
-    if (!blob) return;
-    if (photoURL) URL.revokeObjectURL(photoURL);
-    photoURL = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = photoURL;
-    link.download = "camera_saw_photo.jpg";
-    link.textContent = "Зберегти фото";
-    document.querySelector("#photoDownload").replaceChildren(link);
-    status.textContent = "Переглянь фото перед збереженням.";
-  }, "image/jpeg");
-};
-
-record.onclick = () => {
-  if (!stream || !window.MediaRecorder) {
-    status.textContent = "Запис відео не підтримується.";
-    return;
-  }
-  chunks = [];
-  recorder = new MediaRecorder(stream);
-  recorder.ondataavailable = event => {
-    if (event.data.size) chunks.push(event.data);
-  };
-  recorder.onstop = () => {
-    const blob = new Blob(chunks, {
-      type: recorder.mimeType || "video/webm"
+        video.srcObject = stream;
+        video.classList.remove("hidden");
+        photoButton.classList.remove("hidden");
+        cameraButton.classList.add("hidden");
+      } catch (error) {
+        alert("Доступ до камери не надано. Можеш продовжити без фото.");
+      }
     });
-    if (videoURL) URL.revokeObjectURL(videoURL);
-    videoURL = URL.createObjectURL(blob);
-    result.src = videoURL;
-    result.hidden = false;
-    const link = document.createElement("a");
-    link.href = videoURL;
-    link.download = "camera_saw_video.webm";
-    link.textContent = "Зберегти відео";
-    document.querySelector("#videoDownload").replaceChildren(link);
-    status.textContent = "Переглянь відео перед збереженням.";
-    record.disabled = false;
-  };
-  recorder.start();
-  record.disabled = true;
-  finish.disabled = false;
-  status.textContent = "Відео записується.";
-};
 
-finish.onclick = () => {
-  if (recorder && recorder.state !== "inactive") recorder.stop();
-  finish.disabled = true;
-};
-</script>
+    photoButton.addEventListener("click", () => {
+      if (!video.videoWidth) {
+        alert("Камера ще завантажується. Спробуй трохи пізніше.");
+        return;
+      }
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      const context = canvas.getContext("2d");
+      context.drawImage(video, 0, 0);
+
+      canvas.toBlob(blob => {
+        if (!blob) return;
+
+        if (photoUrl) URL.revokeObjectURL(photoUrl);
+        photoUrl = URL.createObjectURL(blob);
+
+        saveButton.classList.remove("hidden");
+        finishButton.textContent = "Завершити розіграш";
+      }, "image/jpeg", 0.92);
+    });
+
+    saveButton.addEventListener("click", () => {
+      if (!photoUrl) return;
+
+      const link = document.createElement("a");
+      link.href = photoUrl;
+      link.download = "camera-saw-photo.jpg";
+      link.click();
+    });
+
+    function finishPrank() {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+
+      cameraSection.classList.add("hidden");
+      prankSection.classList.remove("hidden");
+    }
+
+    finishButton.addEventListener("click", finishPrank);
+  </script>
+
 </body>
 </html>
