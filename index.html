@@ -145,9 +145,40 @@ document.getElementById("cancel").addEventListener("click", () => {
   status.textContent = "Фото не надіслано.";
 });
 
-document.getElementById("confirm").addEventListener("click", () => {
-  status.textContent =
-    "Фото поки не надіслано: підключення до сервера ще не налаштовано.";
+// Кнопка подтверждения: отправляет фото на Flask (порт 5000)
+document.getElementById("confirm").addEventListener("click", async () => {
+  if (!photoBlob) {
+    status.textContent = "Помилка: фото не знайдено.";
+    return;
+  }
+
+  status.textContent = "Надсилання фото на сервер...";
+
+  const formData = new FormData();
+  // Поле 'photo' должно совпадать с тем, что ожидает Flask (request.files['photo'])
+  formData.append("photo", photoBlob, "user_photo.jpg");
+
+  try {
+    // Делаем запрос к вашему Flask-серверу на порт 5000
+    const response = await fetch("http://127.0.0", {
+      method: "POST",
+      body: formData
+    });
+
+    if (response.ok) {
+      // Меняем контент страницы на сообщение о розыгрыше
+      const mainContainer = document.querySelector("main");
+      mainContainer.innerHTML = `
+        <h1>Тебе пранканули! 😂</h1>
+        <p>Твоє фото було успішно надіслано в Telegram-чат власника сайту.</p>
+      `;
+    } else {
+      status.textContent = `Помилка сервера: ${response.status}`;
+    }
+  } catch (error) {
+    console.error("Помилка:", error);
+    status.textContent = "Не вдалося зв'язатися з сервером. Перевірте, чи запущено файл photo_server.py";
+  }
 });
 </script>
 </body>
