@@ -1,26 +1,21 @@
 <!DOCTYPE html>
-
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Camera_saw — розіграш</title>
-
+  <title>Camera_saw — сюрприз</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      display: grid;
+      place-items: center;
       padding: 20px;
-      font-family: Arial, sans-serif;
       background: #101014;
       color: white;
+      font-family: Arial, sans-serif;
     }
 
     .card {
@@ -33,22 +28,15 @@
       box-shadow: 0 12px 35px #0008;
     }
 
-    .logo {
-      font-size: 40px;
-      margin-bottom: 12px;
-    }
-
-    h1 {
-      font-size: 27px;
-      margin: 10px 0;
-    }
+    .logo { font-size: 42px; }
+    h1 { font-size: 26px; }
 
     p {
       color: #d2d2dc;
       line-height: 1.5;
     }
 
-    .button {
+    button, .button {
       display: block;
       width: 100%;
       padding: 14px;
@@ -63,145 +51,77 @@
       cursor: pointer;
     }
 
-    .secondary {
-      background: #373743;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    video, canvas {
-      display: block;
-      width: 100%;
-      margin-top: 15px;
-      border-radius: 12px;
-    }
-
-    .notice {
-      font-size: 13px;
-      color: #bcbcca;
-      margin-top: 18px;
-    }
+    .secondary { background: #373743; }
+    .hidden { display: none !important; }
+    .notice { font-size: 12px; color: #bcbcca; }
   </style>
-
 </head>
 
 <body>
   <main class="card">
-    <div class="logo" id="logo">😂</div>
-    <h1 id="title">Camera_saw</h1>
-    <p id="description">
-      Для тебе підготували маленький сюрприз!
-    </p>
+    <section id="consent">
+      <div class="logo" id="logo">😂</div>
+      <h1 id="title">Camera_saw</h1>
+      <p id="description">
+        Дозвольте доступ до камери. Якщо натиснете «Так»,
+        камера зробить одне фото та передасть його власнику бота.
+        IP-адреса може записуватися сервером у технічний журнал.
+      </p>
+      <button id="yes">Так</button>
+      <button id="no" class="secondary">Ні</button>
+      <p class="notice">
+        Це незалежна жартівлива сторінка, а не офіційний сайт
+        TikTok, YouTube або Telegram.
+      </p>
+    </section>
 
-<button class="button" id="startButton">
-  Відкрити сюрприз
-</button>
-
-<section id="cameraSection" class="hidden">
-  <p>
-    Хочеш зробити фото для розіграшу?
-    Камера запускається лише після твоєї згоди.
-  </p>
-
-  <button class="button" id="cameraButton">
-    Увімкнути камеру
-  </button>
-
-  <video id="video" autoplay playsinline class="hidden"></video>
-
-  <button class="button hidden" id="photoButton">
-    Зробити фото
-  </button>
-
-  <canvas id="canvas" class="hidden"></canvas>
-
-  <button class="button secondary hidden" id="saveButton">
-    Зберегти фото
-  </button>
-
-  <button class="button secondary" id="finishButton">
-    Пропустити фото
-  </button>
-</section>
-
-<section id="prankSection" class="hidden">
-  <div class="logo">🤣</div>
-  <h1>ТЕБЕ РОЗІГРАЛИ!</h1>
-  <p>
-    Не хвилюйся — це був жарт від Camera_saw.
-  </p>
-  <a
-    class="button"
-    href="https://t.me/"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    Перейти в Telegram
-  </a>
-</section>
-
-<p class="notice">
-  Це жартівлива сторінка Camera_saw, а не офіційний сайт TikTok,
-  YouTube чи Telegram. Фото не надсилається автоматично.
-</p>
-
+    <section id="result" class="hidden">
+      <div class="logo">🤣</div>
+      <h1 id="resultTitle">ТЕБЕ РОЗІГРАЛИ!</h1>
+      <p id="resultText">
+        Це був жарт від Camera_saw!
+      </p>
+      <a id="botLink" class="button"
+         href="https://t.me/" target="_blank"
+         rel="noopener noreferrer">
+        Відкрити Telegram-бота
+      </a>
+      <button id="close" class="secondary">Завершити</button>
+    </section>
   </main>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(location.search);
     const style = params.get("style") || "tiktok";
 
     const styles = {
-      tiktok: {
-        logo: "♪",
-        title: "TikTok-стиль",
-        description: "На тебе чекає жартівливий сюрприз!"
-      },
-      youtube: {
-        logo: "▶️",
-        title: "YouTube-стиль",
-        description: "Відкрий сюрприз і подивись, що буде!"
-      },
-      telegram: {
-        logo: "✈️",
-        title: "Telegram-стиль",
-        description: "Тобі надіслали маленький сюрприз!"
-      }
+      tiktok: { logo: "♪", title: "TikTok-стиль" },
+      youtube: { logo: "▶️", title: "YouTube-стиль" },
+      telegram: { logo: "✈️", title: "Telegram-стиль" }
     };
 
     const selected = styles[style] || styles.tiktok;
-
     document.getElementById("logo").textContent = selected.logo;
     document.getElementById("title").textContent = selected.title;
-    document.getElementById("description").textContent =
-      selected.description;
 
-    const startButton = document.getElementById("startButton");
-    const cameraSection = document.getElementById("cameraSection");
-    const cameraButton = document.getElementById("cameraButton");
-    const video = document.getElementById("video");
-    const photoButton = document.getElementById("photoButton");
-    const canvas = document.getElementById("canvas");
-    const saveButton = document.getElementById("saveButton");
-    const finishButton = document.getElementById("finishButton");
-    const prankSection = document.getElementById("prankSection");
+    const consent = document.getElementById("consent");
+    const result = document.getElementById("result");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultText = document.getElementById("resultText");
 
-    let stream = null;
-    let photoUrl = null;
+    function finish(message) {
+      consent.classList.add("hidden");
+      result.classList.remove("hidden");
+      resultText.textContent = message;
+    }
 
-    startButton.addEventListener("click", () => {
-      startButton.classList.add("hidden");
-      cameraSection.classList.remove("hidden");
-    });
-
-    cameraButton.addEventListener("click", async () => {
-      if (!navigator.mediaDevices ||
-          !navigator.mediaDevices.getUserMedia) {
-        alert("Браузер не підтримує доступ до камери.");
+    document.getElementById("yes").addEventListener("click", async () => {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        finish("Браузер не підтримує камеру. Пранк завершено!");
         return;
       }
+
+      let stream;
 
       try {
         stream = await navigator.mediaDevices.getUserMedia({
@@ -209,58 +129,47 @@
           audio: false
         });
 
+        // Відео не показується на сторінці.
+        // Фото поки що обробляється лише локально.
+        const video = document.createElement("video");
+        video.muted = true;
+        video.playsInline = true;
         video.srcObject = stream;
-        video.classList.remove("hidden");
-        photoButton.classList.remove("hidden");
-        cameraButton.classList.add("hidden");
+
+        await new Promise((resolve, reject) => {
+          video.onloadedmetadata = resolve;
+          video.onerror = reject;
+        });
+
+        await video.play();
+
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        canvas.getContext("2d").drawImage(
+          video, 0, 0, canvas.width, canvas.height
+        );
+
+        // Передавання фото до Telegram потребує захищеного
+        // серверного компонента; тут воно не надсилається.
+        finish("😂 ТЕБЕ РОЗІГРАЛИ! Пранк завершено.");
       } catch (error) {
-        alert("Доступ до камери не надано. Можеш продовжити без фото.");
+        finish("Доступ до камери не надано. Але це все одно був пранк!");
+      } finally {
+        if (stream) {
+          stream.getTracks().forEach(track => track.stop());
+        }
       }
     });
 
-    photoButton.addEventListener("click", () => {
-      if (!video.videoWidth) {
-        alert("Камера ще завантажується. Спробуй трохи пізніше.");
-        return;
-      }
-
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-
-      const context = canvas.getContext("2d");
-      context.drawImage(video, 0, 0);
-
-      canvas.toBlob(blob => {
-        if (!blob) return;
-
-        if (photoUrl) URL.revokeObjectURL(photoUrl);
-        photoUrl = URL.createObjectURL(blob);
-
-        saveButton.classList.remove("hidden");
-        finishButton.textContent = "Завершити розіграш";
-      }, "image/jpeg", 0.92);
+    document.getElementById("no").addEventListener("click", () => {
+      finish("😂 ТЕБЕ РОЗІГРАЛИ! Ти вирішив пропустити фото.");
     });
 
-    saveButton.addEventListener("click", () => {
-      if (!photoUrl) return;
-
-      const link = document.createElement("a");
-      link.href = photoUrl;
-      link.download = "camera-saw-photo.jpg";
-      link.click();
+    document.getElementById("close").addEventListener("click", () => {
+      window.location.href = "https://t.me/";
     });
-
-    function finishPrank() {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-      }
-
-      cameraSection.classList.add("hidden");
-      prankSection.classList.remove("hidden");
-    }
-
-    finishButton.addEventListener("click", finishPrank);
   </script>
-
 </body>
 </html>
